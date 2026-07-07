@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Trekking App</title>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <a href="{{ url_for('admin_dash') }}" class="nav-item">Dashboard</a>
+            <a href="{{ url_for('admin_manage_trek') }}" class="nav-item">Treks</a>
+            <a href="{{ url_for('admin_staff') }}" class="nav-item">Staff</a>
+            <a href="{{ url_for('admin_users') }}" class="nav-item">Users</a>
+            <div class="nav-item">Bookings</div>
+            <div class="nav-item">Search</div>
+            
+        </aside>
+        
+        <main class="main-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+</body>
+</html>

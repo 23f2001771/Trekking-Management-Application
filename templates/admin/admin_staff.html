@@ -1,0 +1,45 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+<h3>Staff Requests</h3>
+
+<div class="tabs">
+    <a href="{{ url_for('admin_staff', status='pending') }}" class="tab-btn {% if active_status == 'pending' %}active{% endif %}">Pending ({{ pending_count }})</a>
+    <a href="{{ url_for('admin_staff', status='approved') }}" class="tab-btn {% if active_status == 'approved' %}active{% endif %}">Approved ({{ approved_count }})</a>
+    <a href="{{ url_for('admin_staff', status='blacklisted') }}" class="tab-btn {% if active_status == 'blacklisted' %}active{% endif %}">Blacklisted ({{ blacklisted_count }})</a>
+</div>
+
+<table class="staff-table">
+    <thead>
+        <tr><th>Staff ID</th><th>Name</th><th>Email</th><th>Contact</th><th>Status</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+        {% if staff_requests %}
+            {% for staff in staff_requests %}
+                <tr>
+                    <td>{{ staff.staff_id }}</td>
+                    <td>{{ staff.name }}</td>
+                    <td>{{ staff.email }}</td>
+                    <td>{{ staff.contact or 'N/A' }}</td>
+                    <td><span class="badge">{{ staff.status|capitalize }}</span></td>
+                    <td>
+                        {% if staff.status == 'pending' %}
+                            <form action="{{ url_for('staff_request_action', staff_id=staff.staff_id, action='approve') }}" method="post" style="display:inline;">
+                                <button class="btn-approve" type="submit">Approve</button>
+                            </form>
+                            <form action="{{ url_for('staff_request_action', staff_id=staff.staff_id, action='reject') }}" method="post" style="display:inline;">
+                                <button class="btn-reject" type="submit">Reject</button>
+                            </form>
+                        {% else %}
+                            <span>-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="6">No staff requests found.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}

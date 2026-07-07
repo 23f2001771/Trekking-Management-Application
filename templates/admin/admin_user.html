@@ -1,0 +1,36 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+<h3>User Management</h3>
+
+<table class="user-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.user_id }}</td>
+            <td>{{ user.user_name }}</td>
+            <td>{{ user.user_email }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+                {% if user.approved %}
+                    <span style="color: green;">Approved</span>
+                {% elif user.blacklisted %}
+                    <span style="color: red;">Blacklisted</span>
+                {% else %}
+                    <span style="color: orange;">Pending</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

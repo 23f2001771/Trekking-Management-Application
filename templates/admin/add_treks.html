@@ -1,0 +1,39 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+{% if trek %}
+<form method="POST" action="/add_trek">
+    <input type="hidden" name="_method" value="PATCH">
+    <input type="hidden" name="trek_id" value="{{ trek.trek_id }}">
+    <label for="trek_name_upd">Trek Name</label>
+    <input type="text" id="trek_name_upd" name="trek_name_upd" value="{{ trek.name }}"><br>
+    <input type="submit" value="Update Trek">
+</form>
+{% else %}
+<form method="POST" action="/add_trek">
+    <h3>Add New Trek</h3>
+    <div class="form-grid">
+        <div class="form-col">
+            <label>Trek Name</label><input type="text" id="trek_name" name="trek_name" required>
+            <label>Location</label><input type="text" name="location">
+            <label>Difficulty</label>
+            <select name="difficulty"><option value="">-- Select --</option></select>
+            <label>Duration (Days)</label><input type="number" name="duration">
+            <label>Available Slots</label><input type="number" name="slots">
+        </div>
+        <div class="form-col">
+            <label>Start Date</label><input type="date" name="start_date">
+            <label>End Date</label><input type="date" name="end_date">
+            <label>Assign Staff</label>
+            <select name="responsible_trek_staff"><option value="">-- Select Staff --</option></select>
+            <label>Status</label>
+            <select name="trek_status"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+            <label>Description</label><textarea name="trek_details"></textarea>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="button" class="btn-cancel">Cancel</button>
+        <button type="submit" class="btn-save">Save</button>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

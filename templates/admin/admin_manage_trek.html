@@ -1,0 +1,47 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+<div class="page-header">
+    <h3>Treks</h3>
+    <div class="page-actions">
+        
+        <a href="{{ url_for('add_trek') }}" class="btn-primary">+ Add New Trek</a>
+    </div>
+</div>
+
+<div class="search-container">
+    <input type="text" placeholder="Search treks...">
+</div>
+
+<table class="trek-table">
+    <thead>
+        <tr>
+            <th>ID</th><th>Trek Name</th><th>Location</th><th>Difficulty</th><th>Slots</th><th>Status</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if treks %}
+            {% for trek in treks %}
+                <tr>
+                    <td>{{ trek.trek_id }}</td>
+                    <td>{{ trek.name }}</td>
+                    <td>{{ trek.location or 'N/A' }}</td>
+                    <td>{{ trek.difficulty or 'N/A' }}</td>
+                    <td>{{ trek.slots or 0 }}</td>
+                    <td>{{ trek.status or 'N/A' }}</td>
+                    <td>
+                        <a href="{{ url_for('add_trek', trek_id=trek.trek_id) }}" class="btn-icon">✎</a>
+                        <form action="/add_trek/{{ trek.trek_id }}" method="post" style="display:inline;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button class="btn-icon" type="submit">🗑</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="7">No treks found.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}

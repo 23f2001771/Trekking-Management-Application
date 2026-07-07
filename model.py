@@ -35,5 +35,27 @@ class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     trek_id = db.Column(db.Integer, db.ForeignKey('treks.trek_id'), nullable=False)
+    booking_date = db.Column(db.DateTime(), default=db.func.now())
     user = db.relationship("User", back_populates="bookings")
     trek = db.relationship("Trek", back_populates="bookings")
+
+class Staff(db.Model):
+    __tablename__ = 'staff'
+    staff_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    contact = db.Column(db.String(50), nullable=True)
+    status = db.Column(db.String(50), default='pending')
+
+    assignments = db.relationship('StaffAssignment', back_populates='staff', cascade='all, delete-orphan')
+
+
+class StaffAssignment(db.Model):
+    __tablename__ = 'staff_assignments'
+    assignment_id = db.Column(db.Integer, primary_key=True)
+    staff_id = db.Column(db.Integer, db.ForeignKey('staff.staff_id'), nullable=False)
+    trek_id = db.Column(db.Integer, db.ForeignKey('treks.trek_id'), nullable=False)
+    assignment_date = db.Column(db.DateTime(), default=db.func.now())
+    
+    staff = db.relationship('Staff', back_populates='assignments')
+    trek = db.relationship('Trek')

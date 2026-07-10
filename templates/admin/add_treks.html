@@ -2,11 +2,44 @@
 {% block content %}
 {% if trek %}
 <form method="POST" action="/add_trek">
-    <input type="hidden" name="_method" value="PATCH">
     <input type="hidden" name="trek_id" value="{{ trek.trek_id }}">
-    <label for="trek_name_upd">Trek Name</label>
-    <input type="text" id="trek_name_upd" name="trek_name_upd" value="{{ trek.name }}"><br>
-    <input type="submit" value="Update Trek">
+    <h3>Edit Trek</h3>
+    <div class="form-grid">
+        <div class="form-col">
+            <label>Trek Name</label><input type="text" id="trek_name" name="trek_name" value="{{ trek.trek_name }}" required>
+            <label>Location</label><input type="text" name="location" value="{{ trek.trek_location }}">
+            <label>Difficulty</label>
+            <select name="difficulty">
+                <option value="">-- Select --</option>
+                <option value="Easy" {% if trek.trek_difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+                <option value="Moderate" {% if trek.trek_difficulty == 'Moderate' %}selected{% endif %}>Moderate</option>
+                <option value="Hard" {% if trek.trek_difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+            </select>
+            <label>Duration (Days)</label><input type="number" name="duration" value="{{ trek.trek_duration }}">
+            <label>Available Slots</label><input type="number" name="slots" value="{{ trek.slots }}">
+        </div>
+        <div class="form-col">
+            <label>Start Date</label><input type="date" name="start_date" value="{{ trek.start_date }}">
+            <label>End Date</label><input type="date" name="end_date" value="{{ trek.end_date }}">
+            <label>Assign Staff</label>
+            <select name="responsible_trek_staff">
+                <option value="">-- Select Staff --</option>
+                {% for staff_member in staff %}
+                    <option value="{{ staff_member.user_id }}" {% if trek.user_id == staff_member.user_id %}selected{% endif %}>{{ staff_member.user_name }}</option>
+                {% endfor %}
+            </select>
+            <label>Status</label>
+            <select name="trek_status">
+                <option value="active" {% if trek.status == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if trek.status == 'inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+            <label>Description</label><textarea name="trek_details">{{ trek.trek_description }}</textarea>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="button" class="btn-cancel">Cancel</button>
+        <button type="submit" class="btn-save">Update Trek</button>
+    </div>
 </form>
 {% else %}
 <form method="POST" action="/add_trek">
@@ -24,7 +57,12 @@
             <label>Start Date</label><input type="date" name="start_date">
             <label>End Date</label><input type="date" name="end_date">
             <label>Assign Staff</label>
-            <select name="responsible_trek_staff"><option value="">-- Select Staff --</option></select>
+            <select name="responsible_trek_staff">
+                <option value="">-- Select Staff --</option>
+                {% for staff_member in staff %}
+                    <option value="{{ staff_member.user_id }}">{{ staff_member.user_name }}</option>
+                {% endfor %}
+            </select>
             <label>Status</label>
             <select name="trek_status"><option value="active">Active</option><option value="inactive">Inactive</option></select>
             <label>Description</label><textarea name="trek_details"></textarea>

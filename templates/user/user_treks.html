@@ -1,0 +1,43 @@
+{% extends "user/user_base.html" %}
+{% block content %}
+<h1>Available Treks</h1>
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Trek Name</th>
+                <th>Location</th>
+                <th>Difficulty</th>
+                <th>Duration</th>
+                <th>Available Slots</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if available_treks %}
+                {% for item in available_treks %}
+                    <tr>
+                        <td>{{ item.trek.trek_name }}</td>
+                        <td>{{ item.trek.trek_location or 'N/A' }}</td>
+                        <td>{{ item.trek.trek_difficulty|capitalize or 'N/A' }}</td>
+                        <td>{{ item.trek.trek_duration or 'N/A' }}</td>
+                        <td>{{ item.available_slots }}</td>
+                        <td>
+                            {% if item.booked_by_user %}
+                                <button class="btn-primary" disabled>Booked</button>
+                            {% else %}
+                                <form action="{{ url_for('book_trek', trek_id=item.trek.trek_id) }}" method="post" style="margin:0;">
+                                    <button class="btn-primary" type="submit">Book Now</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="6">No treks available.</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

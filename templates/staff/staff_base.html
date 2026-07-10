@@ -7,12 +7,9 @@
 <body>
     <div class="dashboard-wrapper">
         <aside class="sidebar">
-            <a href="{{ url_for('admin_dash') }}">Dashboard</a>
-            <a href="{{ url_for('admin_manage_trek') }}" >Treks</a>
-            <a href="{{ url_for('admin_staff') }}">Staff</a>
-            <a href="{{ url_for('admin_users') }}">Users</a>
-            <a href="{{ url_for('admin_bookings') }}">Bookings</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+                <a href="{{ url_for('staff_dashboard') }}" class="nav-item">Dashboard</a>
+                <a href="{{ url_for('staff_trek') }}" class="nav-item">My Treks</a>
+                <a href="{{ url_for('logout') }}" class="nav-item logout-link">Logout</a>
         </aside>
         
         <main class="main-content">

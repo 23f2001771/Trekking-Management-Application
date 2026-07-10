@@ -11,6 +11,7 @@
             <th>Email</th>
             <th>Role</th>
             <th>Status</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -27,6 +28,20 @@
                     <span style="color: red;">Blacklisted</span>
                 {% else %}
                     <span style="color: orange;">Pending</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if not user.approved and not user.blacklisted %}
+                    <form action="{{ url_for('admin_user_action', user_id=user.user_id, action='approve') }}" method="post" style="display:inline; margin-right:6px;">
+                        <button type="submit" class="btn-action btn-approve">Approve</button>
+                    </form>
+                    <form action="{{ url_for('admin_user_action', user_id=user.user_id, action='blacklist') }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn-action btn-blacklist">Blacklist</button>
+                    </form>
+                {% elif user.approved %}
+                    <span class="action-label">Approved</span>
+                {% else %}
+                    <span class="action-label">Blacklisted</span>
                 {% endif %}
             </td>
         </tr>

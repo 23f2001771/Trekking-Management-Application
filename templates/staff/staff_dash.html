@@ -1,0 +1,21 @@
+{% extends "staff/staff_base.html" %}
+{% block content %}
+<h3>My Dashboard</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Assigned Treks</th>
+            <th>Total Participants</th>
+            <th>Open Treks</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ total_treks }}</td>
+            <td>{{ total_users }}</td>
+            <td>{{ open_treks }}</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
+    

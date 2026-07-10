@@ -1,0 +1,35 @@
+{% extends "staff/staff_base.html" %}
+{% block content %}
+
+<h3>Assigned Treks ({{ assigned_treks|length }})</h3>
+
+    {% if assigned_treks %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Trek Name</th>
+                    <th>Location</th>
+                    <th>Participants</th>
+                    <th>Slots</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trek in assigned_treks %}
+                    <tr>
+                        <td>{{ trek.trek_name }}</td>
+                        <td>{{ trek.trek_location or 'N/A' }}</td>
+                        <td>{{ trek.bookings|length }}</td>
+                        <td>{{ trek.slots or 0 }}</td>
+                        <td>{{ trek.status|default('active')|capitalize }}</td>
+                        <td><a href="{{ url_for('staff_user', trek_id=trek.trek_id) }}">View Details</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No assigned trek found yet.</p>
+    {% endif %}
+
+{% endblock %}

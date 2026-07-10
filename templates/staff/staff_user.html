@@ -1,0 +1,36 @@
+{% extends "staff/staff_base.html" %}
+{% block content %}
+{% if trek %}
+    <h2>Trek Details</h2>
+    <h3>{{ trek.trek_name }}</h3>
+    <p><strong>Trek Location:</strong> {{ trek.trek_location or 'N/A' }}</p>
+    <p><strong>Difficulty:</strong> {{ trek.trek_difficulty|capitalize if trek.trek_difficulty else 'N/A' }}</p>
+    <p><strong>Duration:</strong> {{ trek.trek_duration or 'N/A' }}</p>
+    <p><strong>Start Date:</strong> {{ trek.start_date.strftime('%d %b %Y') if trek.start_date else 'N/A' }}</p>
+    <p><strong>End Date:</strong> {{ trek.end_date.strftime('%d %b %Y') if trek.end_date else 'N/A' }}</p>
+    <p><strong>Available Slots:</strong> {{ trek.slots or 'N/A' }}</p>
+
+    <h3>Participants ({{ participants|length }})</h3>
+    <table>
+        <thead>
+            <tr><th>User Name</th><th>Email</th><th>Booking Date</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            {% if participants %}
+                {% for booking in participants %}
+                    <tr>
+                        <td>{{ (booking.user.user_name or booking.user.user_email.split('@')[0]).capitalize() }}</td>
+                        <td>{{ booking.user.user_email }}</td>
+                        <td>{{ booking.booking_date.strftime('%d %b %Y') if booking.booking_date else 'N/A' }}</td>
+                        <td>{{ booking.status|capitalize }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No participants found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}

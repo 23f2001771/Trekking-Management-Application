@@ -23,9 +23,9 @@
             {% for trek in treks %}
                 <tr>
                     <td>{{ trek.trek_id }}</td>
-                    <td>{{ trek.name }}</td>
-                    <td>{{ trek.location or 'N/A' }}</td>
-                    <td>{{ trek.difficulty or 'N/A' }}</td>
+                    <td>{{ trek.trek_name }}</td>
+                    <td>{{ trek.trek_location or 'N/A' }}</td>
+                    <td>{{ trek.trek_difficulty or 'N/A' }}</td>
                     <td>{{ trek.slots or 0 }}</td>
                     <td>{{ trek.status or 'N/A' }}</td>
                     <td>

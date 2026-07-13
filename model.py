@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import event
+
 
 
 db = SQLAlchemy()
@@ -22,8 +22,7 @@ class User(db.Model):
     assigned_treks = db.relationship('Trek', back_populates='user', lazy=True)
     staff_profile = db.relationship('Staff', back_populates='user', uselist=False)
 
-    def __repr__(self):
-        return f'<User {self.user_email}>'
+    
 
 
 class Trek(db.Model):
@@ -45,8 +44,7 @@ class Trek(db.Model):
     bookings = db.relationship('Booking', back_populates='trek', lazy=True)
     user = db.relationship('User', back_populates='assigned_treks', lazy=True)
 
-    def __repr__(self):
-        return f'<Trek {self.trek_name}>'
+    
 
 
 class Booking(db.Model):
@@ -63,8 +61,7 @@ class Booking(db.Model):
     user = db.relationship('User', back_populates='bookings')
     trek = db.relationship('Trek', back_populates='bookings')
 
-    def __repr__(self):
-        return f'<Booking {self.id}>'
+    
 
 
 class Staff(db.Model):
@@ -81,9 +78,7 @@ class Staff(db.Model):
     user = db.relationship('User', back_populates='staff_profile')
     assignments = db.relationship('StaffAssignment', back_populates='staff', cascade='all, delete-orphan')
 
-    def __repr__(self):
-        return f'<Staff {self.email}>'
-
+    
 
 class StaffAssignment(db.Model):
     __tablename__ = 'staff_assignments'
@@ -97,19 +92,5 @@ class StaffAssignment(db.Model):
     staff = db.relationship('Staff', back_populates='assignments')
     trek = db.relationship('Trek')
 
-    def __repr__(self):
-        return f'<StaffAssignment {self.assignment_id}>'
+   
 
-
-@event.listens_for(User, 'after_insert')
-def create_staff_profile(mapper, connection, target):
-    if target.role == 'trek_staff':
-        connection.execute(
-            Staff.__table__.insert().values(
-                user_id=target.user_id,
-                name=target.user_name,
-                email=target.user_email,
-                contact=None,
-                status='pending'
-            )
-        )

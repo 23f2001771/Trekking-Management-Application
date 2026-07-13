@@ -22,16 +22,20 @@
             <label>Start Date</label><input type="date" name="start_date" value="{{ trek.start_date }}">
             <label>End Date</label><input type="date" name="end_date" value="{{ trek.end_date }}">
             <label>Assign Staff</label>
+            {% if staff %}
             <select name="responsible_trek_staff">
                 <option value="">-- Select Staff --</option>
                 {% for staff_member in staff %}
                     <option value="{{ staff_member.user_id }}" {% if trek.user_id == staff_member.user_id %}selected{% endif %}>{{ staff_member.user_name }}</option>
                 {% endfor %}
             </select>
+            {% else %}
+            <p style="color:red;">No approved staff members available. Please approve staff members first.</p>
+            {% endif %}
             <label>Status</label>
             <select name="trek_status">
-                <option value="active" {% if trek.status == 'active' %}selected{% endif %}>Active</option>
-                <option value="inactive" {% if trek.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                <option value="open" {% if trek.status == 'open' %}selected{% endif %}>Open</option>
+                <option value="close" {% if trek.status == 'close' %}selected{% endif %}>Close</option>
             </select>
             <label>Description</label><textarea name="trek_details">{{ trek.trek_description }}</textarea>
         </div>
@@ -57,14 +61,18 @@
             <label>Start Date</label><input type="date" name="start_date">
             <label>End Date</label><input type="date" name="end_date">
             <label>Assign Staff</label>
+            {% if staff %}
             <select name="responsible_trek_staff">
                 <option value="">-- Select Staff --</option>
                 {% for staff_member in staff %}
                     <option value="{{ staff_member.user_id }}">{{ staff_member.user_name }}</option>
                 {% endfor %}
             </select>
+            {% else %}
+            <p style="color:red;">No approved staff members available. Please approve staff members first.</p>
+            {% endif %}
             <label>Status</label>
-            <select name="trek_status"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+            <select name="trek_status"><option value="open">Open</option><option value="close">Close</option></select>
             <label>Description</label><textarea name="trek_details"></textarea>
         </div>
     </div>

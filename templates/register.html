@@ -3,30 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h3>Register</h3>
-    <form action="/register" method="post">
-        <label for = "user_name">Name:</label>
-        <input type="text" id="user_name" name="user_name" required><br><br>
+    <div class="login-container">
+        <h3>Register</h3>
+        <form action="/register" method="post">
+            <label for = "user_name">Name:</label>
+            <input type="text" id="user_name" name="user_name" required><br><br>
 
-        <label for="user_email">Email ID:</label>
-        <input type="email" id="user_email" name="user_email" required><br><br>
+            <label for="user_email">Email ID:</label>
+            <input type="email" id="user_email" name="user_email" required><br><br>
 
-        <label for="user_password">Password:</label>
-        <input type="password" id="user_password" name="user_password" required><br><br>
+            <label for="user_password">Password:</label>
+            <input type="password" id="user_password" name="user_password" required><br><br>
 
-        <label for="user_confirm_password">Confirm Password:</label>
-        <input type="password" id="user_confirm_password" name="user_confirm_password" required><br><br>
+            <label for="user_confirm_password">Confirm Password:</label>
+            <input type="password" id="user_confirm_password" name="user_confirm_password" required><br><br>
 
-        <label for="role">I am a:</label>
-        <input type="radio" name="role" value="user" required> Trekker
-        <input type="radio" name="role" value="trek_staff" required> Trek staff<br><br>
+            <label for="role">I am a:</label>
+            <input type="radio" name="role" value="user" required> Trekker
+            <input type="radio" name="role" value="trek_staff" required> Trek staff<br><br>
 
-        <input type="submit" value="Register">
-    </form>
+            <input type="submit" value="Register">
+        </form>
 
-    <p>Already have an account? <a href="/login">Login here</a></p>
+        <p>Already have an account? <a href="/login">Login here</a></p>
+    </div>
 </body>
 </html>

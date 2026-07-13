@@ -1,0 +1,172 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+<div class="search-container">
+    <h1>Search Management</h1>
+    
+    <!-- Search Bar Section -->
+    <div class="search-bar-section">
+        <form method="GET" id="searchForm" class="search-form">
+            <div class="search-input-group">
+                <input type="text" 
+                       name="q" 
+                       placeholder="Search by name, email, or location..." 
+                       value="{{ query or '' }}"
+                       class="search-input">
+                <button type="submit" class="search-btn">Search</button>
+            </div>
+            
+            <!-- Search Type Selector -->
+            <div class="search-type-selector">
+                <label>Search Type:</label>
+                <select name="type" id="searchType" onchange="updateFilters()">
+                    <option value="users" {% if search_type == 'users' %}selected{% endif %}>Users</option>
+                    <option value="staff" {% if search_type == 'staff' %}selected{% endif %}>Staff Members</option>
+                    <option value="treks" {% if search_type == 'treks' %}selected{% endif %}>Treks</option>
+                </select>
+            </div>
+            
+            <!-- Conditional Filters -->
+            <div class="filters-section">
+                <!-- Staff Status Filter -->
+                <div id="staffFilter" class="filter-group" {% if search_type != 'staff' %}style="display:none;"{% endif %}>
+                    <label>Status:</label>
+                    <select name="status">
+                        <option value="all">All Status</option>
+                        <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="approved" {% if status == 'approved' %}selected{% endif %}>Approved</option>
+                        <option value="blacklisted" {% if status == 'blacklisted' %}selected{% endif %}>Blacklisted</option>
+                    </select>
+                </div>
+                
+                <!-- Trek Difficulty Filter -->
+                <div id="trekFilter" class="filter-group" {% if search_type != 'treks' %}style="display:none;"{% endif %}>
+                    <label>Difficulty:</label>
+                    <select name="difficulty">
+                        <option value="all">All Levels</option>
+                        <option value="Easy" {% if difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+                        <option value="Medium" {% if difficulty == 'Moderate' %}selected{% endif %}>Moderate</option>
+                        <option value="Hard" {% if difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+                        <option value="Expert" {% if difficulty == 'Expert' %}selected{% endif %}>Expert</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Results Section -->
+    <div class="results-section">
+        {% if results %}
+            {% if search_type == 'users' %}
+                <h2>Users Found ({{ results|length }})</h2>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in results %}
+                        <tr>
+                            <td>{{ user.user_id }}</td>
+                            <td>{{ user.user_email }}</td>
+                            <td>{{ user.user_name }}</td>
+                            <td>
+                                <span class="status-badge {% if user.approved %}approved{% elif user.blacklisted %}blacklisted{% else %}pending{% endif %}">
+                                    {% if user.blacklisted %}Blacklisted{% elif user.approved %}Approved{% else %}Pending{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
+                            <td>
+                                <a href="{{ url_for('admin_users') }}" class="action-link">View Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            
+            {% elif search_type == 'staff' %}
+                <h2>Staff Members Found ({{ results|length }})</h2>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Applied</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for staff in results %}
+                        <tr>
+                            <td>{{ staff.staff_id }}</td>
+                            <td>{{ staff.name }}</td>
+                            <td>{{ staff.email }}</td>
+                            <td>{{ staff.contact or 'N/A' }}</td>
+                            <td>
+                                <span class="status-badge {{ staff.status }}">
+                                    {{ staff.status.capitalize() }}
+                                </span>
+                            </td>
+                            <td>{{ staff.created_at.strftime('%Y-%m-%d') if staff.created_at else 'N/A' }}</td>
+                            <td>
+                                {% if staff.status == 'pending' %}
+                                    <form method="POST" action="{{ url_for('staff_request_action', staff_id=staff.staff_id, action='approve') }}" style="display:inline;">
+                                        <button type="submit" class="action-btn approve">Approve</button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('staff_request_action', staff_id=staff.staff_id, action='reject') }}" style="display:inline;">
+                                        <button type="submit" class="action-btn reject">Reject</button>
+                                    </form>
+                                {% else %}
+                                    <span class="action-link disabled">{{ staff.status.capitalize() }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            
+            {% elif search_type == 'treks' %}
+                <h2>Treks Found ({{ results|length }})</h2>
+                <div class="treks-grid">
+                    {% for trek in results %}
+                    <div class="trek-card">
+                        <div class="trek-header">
+                            <h3>{{ trek.trek_name }}</h3>
+                            <span class="difficulty-badge {{ trek.trek_difficulty.lower() }}">{{ trek.trek_difficulty }}</span>
+                        </div>
+                        <div class="trek-details">
+                            <p><strong>Location:</strong> {{ trek.trek_location }}</p>
+                            <p><strong>Duration:</strong> {{ trek.trek_duration }}</p>
+                            <p><strong>Available Slots:</strong> {{ trek.slots }}</p>
+                            <p><strong>Start Date:</strong> {{ trek.start_date.strftime('%Y-%m-%d') if trek.start_date else 'Not set' }}</p>
+                            <p><strong>Status:</strong> <span class="status-badge {{ trek.status }}">{{ trek.status.capitalize() }}</span></p>
+                        </div>
+                        <p class="trek-description">{{ trek.trek_description }}</p>
+                        <div class="trek-actions">
+                            <a href="{{ url_for('admin_manage_trek') }}" class="action-link">Manage</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% elif query or status != 'all' or difficulty != 'all' %}
+            <div class="no-results">
+                <p>No results found. Try a different search query or filters.</p>
+            </div>
+        {% else %}
+            <div class="no-search">
+                <p>Enter a search query to get started.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trekking Management App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h3>Trekking Management App</h3>
-    <a href="/login"><button>Login</button></a> 
-    <a href="/register"><button>Register</button></a>
+    <div class="login-container">
+        <h3>Trekking Management App</h3>
+        <a href="/login"><button>Login</button></a> 
+        <a href="/register"><button>Register</button></a>
+    </div>
 </body>
 </html>

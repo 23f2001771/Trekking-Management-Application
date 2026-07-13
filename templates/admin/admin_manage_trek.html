@@ -1,32 +1,27 @@
 {% extends "admin/admin_base.html" %}
 {% block content %}
-<div class="page-header">
-    <h3>Treks</h3>
-    <div class="page-actions">
-        
-        <a href="{{ url_for('add_trek') }}" class="btn-primary">+ Add New Trek</a>
-    </div>
-</div>
 
-<div class="search-container">
-    <input type="text" placeholder="Search treks...">
-</div>
-
-<table class="trek-table">
+<h2>Treks</h2>    
+    <a href="{{ url_for('add_trek') }}">+ Add New Trek</a>
+<table>
     <thead>
         <tr>
-            <th>ID</th><th>Trek Name</th><th>Location</th><th>Difficulty</th><th>Slots</th><th>Status</th><th>Actions</th>
+            <th>ID</th><th>Trek Name</th><th>Location</th><th>Difficulty</th><th>Slots</th><th>Booked</th><th>Available</th><th>Status</th><th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% if treks %}
             {% for trek in treks %}
+                {% set booked_count = trek.bookings|length %}
+                {% set available = (trek.slots or 0) - booked_count %}
                 <tr>
                     <td>{{ trek.trek_id }}</td>
                     <td>{{ trek.trek_name }}</td>
                     <td>{{ trek.trek_location or 'N/A' }}</td>
                     <td>{{ trek.trek_difficulty or 'N/A' }}</td>
                     <td>{{ trek.slots or 0 }}</td>
+                    <td>{{ booked_count }}</td>
+                    <td>{{ available if available > 0 else 0 }}</td>
                     <td>{{ trek.status or 'N/A' }}</td>
                     <td>
                         <a href="{{ url_for('add_trek', trek_id=trek.trek_id) }}" class="btn-icon">✎</a>
@@ -39,7 +34,7 @@
             {% endfor %}
         {% else %}
             <tr>
-                <td colspan="7">No treks found.</td>
+                <td colspan="9">No treks found.</td>
             </tr>
         {% endif %}
     </tbody>

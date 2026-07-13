@@ -9,6 +9,25 @@
     <p><strong>Start Date:</strong> {{ trek.start_date.strftime('%d %b %Y') if trek.start_date else 'N/A' }}</p>
     <p><strong>End Date:</strong> {{ trek.end_date.strftime('%d %b %Y') if trek.end_date else 'N/A' }}</p>
     <p><strong>Available Slots:</strong> {{ trek.slots or 'N/A' }}</p>
+    <p><strong>Status:</strong> {{ trek.status|capitalize }}</p>
+
+    <h3>Update Trek</h3>
+    <form method="POST" action="{{ url_for('update_trek', trek_id=trek.trek_id) }}">
+        <div>
+            <label>Update Total Slots:</label>
+            <input type="number" name="slots" value="{{ trek.slots or 0 }}" min="0" max="1000" required>
+        </div>
+        <br>
+        <div>
+            <label>Change Status:</label>
+            <select name="status" required>
+                <option value="open" {% if trek.status == 'open' %}selected{% endif %}>Open</option>
+                <option value="close" {% if trek.status == 'close' %}selected{% endif %}>Close</option>
+            </select>
+        </div>
+        <br>
+        <button type="submit">Update Trek</button>
+    </form>
 
     <h3>Participants ({{ participants|length }})</h3>
     <table>

@@ -239,7 +239,7 @@ def add_trek():
     staff = User.query.filter_by(role='trek_staff').join(Staff).filter(Staff.status == 'approved').all()
     return render_template('admin/add_treks.html', trek=trek, staff=staff)
 
-@app.route('/add_trek/<int:trek_id>', methods=['DELETE', 'POST'])
+@app.route('/add_trek/<int:trek_id>', methods=['POST'])
 def delete_trek(trek_id):
     trek = Trek.query.get(trek_id)
     if trek:
@@ -254,7 +254,7 @@ def list_users():
         abort(403)
         
     # Fetch all users from the database
-    users = User.query.all()
+    users = User.query.filter_by(role='user').all()
     return render_template('admin/admin_user.html', users=users)
 
 @app.route('/admin/users/<int:user_id>/<action>', methods=['POST'])
@@ -362,6 +362,12 @@ def trek_staff_dashboard():
 def staff_manage():
     context = get_staff_dashboard_context()
     return render_template('staff/staff_dash.html', **context)
+
+@app.route('/staff_history')
+def staff_history():
+    context = get_staff_dashboard_context()
+    treks = Trek.query.order_by(Trek.trek_id.desc()).all()
+    return render_template('staff/staff_history.html', treks=treks, **context)
 
 @app.route('/user_dash')
 @app.route('/user_dashboard')
@@ -490,13 +496,12 @@ def admin_search():
             )
         if difficulty != 'all':
             trek_query = trek_query.filter_by(trek_difficulty=difficulty)
-        trek_query = trek_query.filter_by(status='open')
+        
         results = trek_query.all()
     
     return render_template('admin/admin_search.html',
                          search_type=search_type,
                          query=query,
-                         status=status,
                          difficulty=difficulty,
                          results=results)
 
@@ -520,6 +525,30 @@ def search_users():
                          search_type='users', 
                          query=query, 
                          results=users)
+
+@app.route('/user_search')
+def user_search():
+    query = request.args.get('q', '').strip()
+    difficulty = request.args.get('difficulty', 'all')
+    results = []
+   
+    trek_query = Trek.query
+    if query:
+        trek_query = trek_query.filter(
+            (Trek.trek_name.ilike(f'%{query}%')) |
+            (Trek.trek_location.ilike(f'%{query}%'))
+        )
+    else:
+        trek_query = Trek.query
+    
+    if difficulty != 'all':
+        trek_query = trek_query.filter_by(trek_difficulty=difficulty)
+        
+    results = trek_query.all()
+    
+    return render_template('user/user_search.html',
+                         query=query,
+                         results=results)
 
 @app.route('/search_staff')
 def search_staff():
@@ -566,7 +595,7 @@ def search_treks():
     if difficulty != 'all':
         trek_query = trek_query.filter_by(trek_difficulty=difficulty)
     
-    trek_query = trek_query.filter_by(status='open')
+    
     treks = trek_query.all()
     
     return render_template('admin/admin_search.html', 
@@ -574,6 +603,85 @@ def search_treks():
                          query=query, 
                          difficulty=difficulty,
                          results=treks)
+
+@app.route('/staff_search')
+@require_active_user
+def staff_search():
+    search_type = request.args.get('type', 'users')
+    query = request.args.get('q', '').strip()
+    difficulty = request.args.get('difficulty', 'all')
+    results = []
+    
+    if search_type == 'users':
+        if query:
+            results = User.query.filter(
+                (User.user_email.ilike(f'%{query}%')) |
+                (User.user_name.ilike(f'%{query}%'))
+            ).filter(User.role == 'user').all()
+        else:
+            results = User.query.filter(User.role == 'user').all()
+    
+    elif search_type == 'treks':
+        trek_query = Trek.query.filter_by(user_id=session.get('user_id'))
+        if query:
+            trek_query = trek_query.filter(
+                (Trek.trek_name.ilike(f'%{query}%')) |
+                (Trek.trek_location.ilike(f'%{query}%'))
+            )
+
+        if difficulty != 'all':
+            trek_query = trek_query.filter_by(trek_difficulty=difficulty)
+        
+        results = trek_query.all()
+    
+    return render_template('staff/staff_search.html',
+                         search_type=search_type,
+                         query=query,
+                         difficulty=difficulty,
+                         results=results)
+
+@app.route('/cancel_booking/<int:trek_id>', methods=['POST'])
+@require_active_user 
+def cancel_booking(trek_id):
+    user_id = session.get('user_id')
+    
+    booking = Booking.query.filter_by(user_id=user_id, trek_id=trek_id).first()
+    
+    if booking:
+        booking.status = 'cancelled'
+
+        '''trek = Trek.query.get(trek_id)
+        if trek:
+            trek.slots += 1
+        ''' 
+        
+        db.session.commit()
+        
+    return redirect(url_for('user_dashboard')) 
+
+@app.route('/update_trek_status/<int:trek_id>/<action>', methods=['POST'])
+def update_trek_status(trek_id, action):
+    trek = Trek.query.get_or_404(trek_id)
+    
+    if action == 'started':
+        trek.status = 'Started'
+    elif action == 'completed':
+        trek.status = 'Completed'
+        
+    bookings = Booking.query.filter_by(trek_id=trek_id).all()
+    for booking in bookings:
+        if booking.status != 'cancelled':
+            booking.status = trek.status 
+        
+    db.session.commit()
+    return redirect(url_for('staff_trek', trek_id=trek_id))
+
+
+@app.route('/user_history')
+def user_history():
+    user_id = session.get('user_id')
+    bookings = Booking.query.filter_by(user_id=user_id).all()
+    return render_template('user/user_history.html', bookings=bookings)
 
 @app.route('/logout')
 def logout():

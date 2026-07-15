@@ -19,6 +19,7 @@
     border-right: 1px solid #ddd;
     display: flex;
     flex-direction: column; /* This keeps links stacked vertically */
+    min-height: 100vh;
     padding: 20px;
 }
 .sidebar a {

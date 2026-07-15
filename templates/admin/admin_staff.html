@@ -29,8 +29,14 @@
                             <form action="{{ url_for('staff_request_action', staff_id=staff.staff_id, action='reject') }}" method="post" style="display:inline;">
                                 <button class="btn-reject" type="submit">Reject</button>
                             </form>
+                        {% elif staff.status == 'blacklisted' %}
+                            <form action="{{ url_for('staff_request_action', staff_id=staff.staff_id, action='approve') }}" method="post" style="display:inline;">
+                                <button class="btn-approve" type="submit">Approve</button>
+                            </form>
                         {% else %}
-                            <span>-</span>
+                            <form action="{{ url_for('staff_request_action', staff_id=staff.staff_id, action='reject') }}" method="post" style="display:inline;">
+                                <button class="btn-reject" type="submit">Reject</button>
+                            </form>
                         {% endif %}
                     </td>
                 </tr>

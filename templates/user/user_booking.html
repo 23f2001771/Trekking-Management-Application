@@ -1,9 +1,11 @@
 {% extends "user/user_base.html" %}
 {% block content %}
 <a href="{{ url_for('user_dashboard') }}">← Back to My Bookings</a>
+
 <h2>Booking Details</h2>
   <h3>{{ booking.trek.trek_name }}</h3>
     <P><strong>Trek Location:</strong> {{ booking.trek.trek_location or 'N/A' }}</P>
+    <p><strong>Assigned Staff:</strong> {{ booking.trek.user.user_name.capitalize() if booking.trek.user else 'Not assigned' }}</p>
     <p><Strong>Difficulty:</Strong> {{ booking.trek.trek_difficulty|capitalize if booking.trek.trek_difficulty else 'N/A' }}</p>
     <p><strong>Duration:</strong> {{ booking.trek.trek_duration or 'N/A' }}</p>
     <p><strong>Start Date:</strong> {{ booking.trek.start_date.strftime('%d %b %Y') if booking.trek.start_date else 'N/A' }}</p>

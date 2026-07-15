@@ -1,8 +1,11 @@
 {% extends "staff/staff_base.html" %}
 {% block content %}
+<a href="{{ url_for('staff_trek') }}">← Back to Treks</a>
+
 {% if trek %}
     <h2>Trek Details</h2>
     <h3>{{ trek.trek_name }}</h3>
+    <p><strong>Assigned Staff:</strong> {{ trek.user.user_name.capitalize() }}</p>
     <p><strong>Trek Location:</strong> {{ trek.trek_location or 'N/A' }}</p>
     <p><strong>Difficulty:</strong> {{ trek.trek_difficulty|capitalize if trek.trek_difficulty else 'N/A' }}</p>
     <p><strong>Duration:</strong> {{ trek.trek_duration or 'N/A' }}</p>
@@ -10,7 +13,7 @@
     <p><strong>End Date:</strong> {{ trek.end_date.strftime('%d %b %Y') if trek.end_date else 'N/A' }}</p>
     <p><strong>Available Slots:</strong> {{ trek.slots or 'N/A' }}</p>
     <p><strong>Status:</strong> {{ trek.status|capitalize }}</p>
-
+    {% if trek.status.lower() != 'completed' %}
     <h3>Update Trek</h3>
     <form method="POST" action="{{ url_for('update_trek', trek_id=trek.trek_id) }}">
         <div>
@@ -28,7 +31,7 @@
         <br>
         <button type="submit">Update Trek</button>
     </form>
-
+    {% endif %}
     <h3>Participants ({{ participants|length }})</h3>
     <table>
         <thead>
@@ -51,5 +54,16 @@
             {% endif %}
         </tbody>
     </table>
+    {% if trek.status.lower() != 'completed' %}
+    <div class="action-buttons" style="margin-top: 20px;">
+        <form action="{{ url_for('update_trek_status', trek_id=trek.trek_id, action='started') }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-primary">Mark as Started</button>
+        </form>
+        
+        <form action="{{ url_for('update_trek_status', trek_id=trek.trek_id, action='completed') }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-success">Mark as Completed</button>
+        </form>
+    </div>
+    {% endif %}
 {% endif %}
 {% endblock %}

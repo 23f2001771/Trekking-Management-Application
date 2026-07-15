@@ -1,0 +1,65 @@
+{% extends "user/user_base.html" %}
+{% block content %}
+
+<div class="search-container">
+    <h1>Search Management</h1>
+    
+    <!-- Search Bar Section -->
+    <div class="search-bar-section">
+        <form method="GET" id="searchForm" class="search-form">
+            <div class="search-input-group">
+                <input type="text" 
+                       name="q" 
+                       placeholder="Search location..." 
+                       value="{{ query or '' }}"
+                       class="search-input">
+                <button type="submit" class="search-btn">Search</button>
+            </div>
+                <!-- Trek Difficulty Filter -->
+                <div id="trekFilter" class="filter-group">
+                    <label>Difficulty:</label>
+                    <select name="difficulty">
+                        <option value="all">All Levels</option>
+                        <option value="Easy" {% if difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+                        <option value="Medium" {% if difficulty == 'Moderate' %}selected{% endif %}>Moderate</option>
+                        <option value="Hard" {% if difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+
+        {% if results %}
+                    <h2>Treks Found ({{ results|length }})</h2>
+                    <div class="treks-grid">
+                        {% for trek in results %}
+                        <div class="trek-card">
+                            <div class="trek-header">
+                                <h3>{{ trek.trek_name }}</h3>
+                                <span class="difficulty-badge {{ trek.trek_difficulty.lower() }}">{{ trek.trek_difficulty }}</span>
+                            </div>
+                            <div class="trek-details">
+                                <p><strong>Location:</strong> {{ trek.trek_location }}</p>
+                                <p><strong>Duration:</strong> {{ trek.trek_duration }}</p>
+                                <p><strong>Available Slots:</strong> {{ trek.slots }}</p>
+                                <p><strong>Start Date:</strong> {{ trek.start_date.strftime('%Y-%m-%d') if trek.start_date else 'Not set' }}</p>
+                                <p><strong>Status:</strong> <span class="status-badge {{ trek.status }}">{{ trek.status.capitalize() }}</span></p>
+                            </div>
+                            <p class="trek-description">{{ trek.trek_description }}</p>
+                        </div>
+                        <hr class="my-4" style="border-top: 2px solid #ccc;">
+                        {% endfor %}
+                    </div>
+            {% elif query or status != 'all' or difficulty != 'all' %}
+                <div class="no-results">
+                    <p>No results found. Try a different search query or filters.</p>
+                </div>
+            {% else %}
+                <div class="no-search">
+                    <p>Enter a search query to get started.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -47,7 +47,6 @@
                         <option value="Easy" {% if difficulty == 'Easy' %}selected{% endif %}>Easy</option>
                         <option value="Medium" {% if difficulty == 'Moderate' %}selected{% endif %}>Moderate</option>
                         <option value="Hard" {% if difficulty == 'Hard' %}selected{% endif %}>Hard</option>
-                        <option value="Expert" {% if difficulty == 'Expert' %}selected{% endif %}>Expert</option>
                     </select>
                 </div>
             </div>
@@ -67,7 +66,7 @@
                             <th>Name</th>
                             <th>Status</th>
                             <th>Joined</th>
-                            <th>Actions</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -82,9 +81,7 @@
                                 </span>
                             </td>
                             <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
-                            <td>
-                                <a href="{{ url_for('admin_users') }}" class="action-link">View Details</a>
-                            </td>
+                        
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -155,6 +152,7 @@
                             <a href="{{ url_for('admin_manage_trek') }}" class="action-link">Manage</a>
                         </div>
                     </div>
+                    <hr class="my-4" style="border-top: 2px solid #ccc;">
                     {% endfor %}
                 </div>
             {% endif %}

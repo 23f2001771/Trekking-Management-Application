@@ -41,7 +41,8 @@ class Trek(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    bookings = db.relationship('Booking', back_populates='trek', lazy=True)
+    # In model.py inside Trek class
+    bookings = db.relationship('Booking', back_populates='trek', lazy=True, cascade='all, delete-orphan')       
     user = db.relationship('User', back_populates='assigned_treks', lazy=True)
 
     
@@ -54,10 +55,10 @@ class Booking(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     trek_id = db.Column(db.Integer, db.ForeignKey('treks.trek_id'), nullable=False)
     booking_date = db.Column(db.DateTime(), default=db.func.now())
-    status = db.Column(db.String(50), default='confirmed')
+    status = db.Column(db.String(50), default='active')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
+    
     user = db.relationship('User', back_populates='bookings')
     trek = db.relationship('Trek', back_populates='bookings')
 

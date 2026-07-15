@@ -11,7 +11,7 @@
     </thead>
     <tbody>
         {% if treks %}
-            {% for trek in treks %}
+            {% for trek in treks|sort(attribute='trek_id', reverse=True) %}
                 {% set booked_count = trek.bookings|length %}
                 {% set available = (trek.slots or 0) - booked_count %}
                 <tr>
@@ -25,9 +25,9 @@
                     <td>{{ trek.status or 'N/A' }}</td>
                     <td>
                         <a href="{{ url_for('add_trek', trek_id=trek.trek_id) }}" class="btn-icon">✎</a>
-                        <form action="/add_trek/{{ trek.trek_id }}" method="post" style="display:inline;">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button class="btn-icon" type="submit">🗑</button>
+                        <form action="/add_trek/{{ trek.trek_id }}" method="post" style="display:inline;"></form>
+                        <form action="{{ url_for('delete_trek', trek_id=trek.trek_id) }}" method="POST">
+                                <button class="btn-icon" type="submit">🗑️</button>
                         </form>
                     </td>
                 </tr>
